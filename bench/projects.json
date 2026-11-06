@@ -1,0 +1,158 @@
+{
+  "suite": {
+    "repo": "https://github.com/microsoft/typescript-benchmarking.git",
+    "commit": "41f652ab2df5077b1115f73eaeefc2fe9f674132"
+  },
+  "tsgo": {
+    "package": "typescript",
+    "version": "7.1.0-beta"
+  },
+  "reference": {
+    "package": "typescript",
+    "version": "7.1.0-beta",
+    "commit": "3e9236361fa97a9e6c685f4833ac457ae2d8c50a",
+    "note": "package built from the TypeScript commit tsrs ports (Cargo.toml [workspace.metadata.typescript]); currently the same package as tsgo. Retained as the explicit parity reference when the benchmark's tsgo version advances."
+  },
+  "projects": [
+    {
+      "name": "vscode",
+      "case": "cases/scenarios/vscode",
+      "repo": "https://github.com/microsoft/vscode.git",
+      "commit": "9cf0128b9822dcd8a533f08ef7312956a4390301",
+      "project": "src",
+      "install": "npm ci --ignore-scripts --no-audit --no-fund"
+    },
+    {
+      "name": "xstate-main",
+      "case": "cases/scenarios/xstate-main",
+      "repo": "https://github.com/statelyai/xstate.git",
+      "commit": "fbee62e7c1586315ed478c2fedf530d7e0ff5a3e",
+      "project": ".",
+      "install": "PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true pnpm --pm-on-fail=ignore dlx $(node -p 'require(\"./package.json\").packageManager') install"
+    },
+    {
+      "name": "webpack",
+      "case": "cases/scenarios/webpack",
+      "repo": "https://github.com/webpack/webpack.git",
+      "commit": "b54c5e2aa26dd0267bc904d45402f811f100186c",
+      "project": ".",
+      "install": "pnpm --pm-on-fail=ignore dlx yarn@1.22.22 install --ignore-scripts --ignore-engines && pnpm --pm-on-fail=ignore dlx yarn@1.22.22 link --link-folder \"$PWD/node_modules/.yarn-link\" && pnpm --pm-on-fail=ignore dlx yarn@1.22.22 link --link-folder \"$PWD/node_modules/.yarn-link\" webpack"
+    },
+    {
+      "name": "mui-docs",
+      "case": "cases/scenarios/mui-docs",
+      "repo": "https://github.com/mui/material-ui.git",
+      "commit": "6780195595c12252a130aa5ae5c5bd461229c6b7",
+      "project": "docs",
+      "install": "pnpm --pm-on-fail=ignore dlx $(node -p 'require(\"./package.json\").packageManager') install --ignore-scripts"
+    },
+    {
+      "name": "Compiler",
+      "case": "cases/scenarios/Compiler",
+      "suite_dir": "cases/solutions/Compiler",
+      "project": "."
+    },
+    {
+      "name": "Compiler-Unions",
+      "case": "cases/scenarios/Compiler-Unions",
+      "suite_dir": "cases/solutions/Compiler-Unions",
+      "project": "tsconfig.json"
+    },
+    {
+      "name": "cal-diy",
+      "repo": "https://github.com/calcom/cal.diy.git",
+      "commit": "54343aa685ae8f33159d2f485ec4a57bad5c574a",
+      "project": "apps/web",
+      "install": "export YARN_NM_MODE=classic YARN_ENABLE_GLOBAL_CACHE=false YARN_CACHE_FOLDER=\"${TMPDIR:-/tmp}/tsrs-bench-yarn-cache\" TURBO_TELEMETRY_DISABLED=1 && node .yarn/releases/yarn-4.12.0.cjs install --immutable --mode=skip-build && node .yarn/releases/yarn-4.12.0.cjs turbo run post-install @calcom/trpc#build --output-logs=errors-only",
+      "overlay": "bench/overlays/cal-diy"
+    },
+    {
+      "name": "formbricks-web",
+      "repo": "https://github.com/formbricks/formbricks.git",
+      "commit": "ec45c28e4d20bd9daf3191c991b67981aabf5db8",
+      "project": "apps/web/tsconfig.typecheck.json",
+      "install": "export PATH=\"$PWD/node_modules/.bin:$PATH\" DATABASE_URL=postgresql://bench@localhost:5432/bench TURBO_TELEMETRY_DISABLED=1 pnpm_config_pm_on_fail=ignore && pnpm dlx pnpm@11.7.0 install --frozen-lockfile --ignore-scripts && turbo run build --filter='@formbricks/web^...' --env-mode=loose --output-logs=errors-only",
+      "overlay": "bench/overlays/formbricks-web"
+    },
+    {
+      "name": "supabase-studio",
+      "repo": "https://github.com/supabase/supabase.git",
+      "commit": "12afe399995143a2cc699eabbbd29596f4e64945",
+      "project": "apps/studio",
+      "install": "pnpm --pm-on-fail=ignore dlx pnpm@11.13.1 install --frozen-lockfile --ignore-scripts --filter studio... && cd apps/studio && NEXT_TELEMETRY_DISABLED=1 node node_modules/next/dist/bin/next typegen"
+    },
+    {
+      "name": "t3code-server",
+      "repo": "https://github.com/pingdotgg/t3code.git",
+      "commit": "9bd1d8009a6b7c50f9dd9458e2bf27d481ff3b43",
+      "project": "apps/server",
+      "install": "pnpm --pm-on-fail=ignore dlx pnpm@11.10.0 install --frozen-lockfile --ignore-scripts --filter t3... --filter @t3tools/scripts..."
+    },
+    {
+      "name": "mikro-orm",
+      "repo": "https://github.com/mikro-orm/mikro-orm.git",
+      "commit": "97fb2318067eae37ef52da57e2975eb7539ed729",
+      "project": "tests",
+      "install": "pnpm --pm-on-fail=ignore dlx --package=@yarnpkg/cli-dist@4.18.1 yarn install --mode=skip-build"
+    },
+    {
+      "name": "next-packages-next",
+      "repo": "https://github.com/vercel/next.js.git",
+      "commit": "fa8dcf34f1629dacc62f1952ee8a66a2439781a5",
+      "project": "packages/next",
+      "install": "pnpm --pm-on-fail=ignore dlx pnpm@10.33.0 install --frozen-lockfile --ignore-scripts && pnpm --pm-on-fail=ignore dlx pnpm@10.33.0 build"
+    },
+    {
+      "name": "next-root",
+      "repo": "https://github.com/vercel/next.js.git",
+      "commit": "fa8dcf34f1629dacc62f1952ee8a66a2439781a5",
+      "project": ".",
+      "install": "pnpm --pm-on-fail=ignore dlx pnpm@10.33.0 install --frozen-lockfile --ignore-scripts && pnpm --pm-on-fail=ignore dlx pnpm@10.33.0 build"
+    },
+    {
+      "name": "storybook",
+      "repo": "https://github.com/storybookjs/storybook.git",
+      "commit": "48dfcc6becd3ab813b9d1de7966ef7fd9c8c9bc0",
+      "project": "scripts",
+      "install": "pnpm --pm-on-fail=ignore dlx --package=@yarnpkg/cli-dist@4.18.0 yarn install --mode=skip-build"
+    },
+    {
+      "name": "nuxt",
+      "repo": "https://github.com/nuxt/nuxt.git",
+      "commit": "85b8d54f6ce49f4d0f199e90513b1e5d5fa22196",
+      "project": ".",
+      "install": "pnpm --pm-on-fail=ignore dlx pnpm@12.9.1 install --frozen-lockfile --ignore-scripts"
+    },
+    {
+      "name": "playwright",
+      "repo": "https://github.com/microsoft/playwright.git",
+      "commit": "d469960fdfc461e2d5795a3fa48a58a52a91ecaf",
+      "project": ".",
+      "install": "npm ci --ignore-scripts --no-audit --no-fund && npm run build"
+    },
+    {
+      "name": "drizzle-orm",
+      "repo": "https://github.com/drizzle-team/drizzle-orm.git",
+      "commit": "15454dbe49d827c6081f3d0231e2e7985e517295",
+      "project": "drizzle-orm/tsconfig.build.json",
+      "install": "pnpm --pm-on-fail=ignore dlx pnpm@10.6.3 install --frozen-lockfile --ignore-scripts",
+      "overlay": "bench/overlays/drizzle-orm"
+    },
+    {
+      "name": "typeorm",
+      "repo": "https://github.com/typeorm/typeorm.git",
+      "commit": "fe92394287516feeada6e9c308ebe22deca2458e",
+      "project": "packages/typeorm",
+      "install": "pnpm --pm-on-fail=ignore dlx pnpm@10.34.5 install --frozen-lockfile --ignore-scripts --filter typeorm...",
+      "overlay": "bench/overlays/typeorm"
+    },
+    {
+      "name": "date-fns",
+      "repo": "https://github.com/date-fns/date-fns.git",
+      "commit": "717ce0a807ea4c6b540d015b5c408723175b2838",
+      "project": "pkgs/core",
+      "install": "pnpm --pm-on-fail=ignore dlx pnpm@11.22.0 install --frozen-lockfile --ignore-scripts && node_modules/.bin/tsc --build pkgs/tz pkgs/utc pkgs/docs",
+      "overlay": "bench/overlays/date-fns"
+    }
+  ]
+}
